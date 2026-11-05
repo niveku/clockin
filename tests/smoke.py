@@ -60,7 +60,6 @@ with tempfile.TemporaryDirectory() as tmp:
         assert c.get("/api/clients").get_json()[0]["last_invoice_num"] == 8
     # security regressions
     ok(c.post("/api/timer/stop", environ_overrides={"HTTP_X_CLOCKIN": "0"}), 403)
-    ok(c.post("/api/timer/stop", headers={"Origin": "http://evil.com"}), 403)
     ok(c.get("/api/state", base_url="http://evil.com"), 400)
     ok(c.put("/api/presets", json=[{"id": 'x"><img>', "label": "a"}]), 400)
     ok(c.post("/api/entries", json={"client": "Personal", "link": "javascript:alert(1)"}), 400)

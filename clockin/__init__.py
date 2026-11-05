@@ -2,7 +2,6 @@
 import socket
 import threading
 import time
-from urllib.parse import urlsplit
 
 from flask import Flask, jsonify, render_template, request
 
@@ -48,6 +47,7 @@ def create_app(data_dir=None):
                 static_folder=str(settings.ROOT / "static"))
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     # Only answer to known Host headers (blocks DNS rebinding); the port is ignored.
+    # shortcut: hosts are resolved once at startup, restart after an IP change
     bound = local_names(ipv6=cfg["host"] == "::") if cfg["host"] in ANY_HOST else [cfg["host"]]
     app.config["TRUSTED_HOSTS"] = ["localhost", "127.0.0.1", "[::1]",
                                    *{host_entry(h) for h in [*bound, *cfg.get("trusted_hosts", [])]}]
@@ -58,15 +58,12 @@ def create_app(data_dir=None):
 
     @app.before_request
     def _same_origin():
-        """Refuse cross-site writes (CSRF), e.g. a form posting to /api/settings/avatar. Browsers send Origin on these.
-        Every write must also carry X-Clockin: 1; another site can't add that header without a CORS preflight."""
+        """Refuse cross-site writes (CSRF): every write must carry X-Clockin: 1, which another site can't send
+        without a CORS preflight, and this app never answers preflights."""
         if request.method in ("GET", "HEAD", "OPTIONS"):
             return None
         if request.headers.get("X-Clockin") != "1":
             return jsonify({"error": "Missing X-Clockin: 1 header"}), 403
-        origin = request.headers.get("Origin")
-        if (origin and urlsplit(origin).netloc != request.host) or request.headers.get("Sec-Fetch-Site") == "cross-site":
-            return jsonify({"error": "Cross-origin request refused"}), 403
 
     @app.route("/")
     def index():

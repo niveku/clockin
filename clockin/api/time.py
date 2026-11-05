@@ -296,14 +296,12 @@ def export_csv():
     w = csv.DictWriter(out, fieldnames=["Week", "Client", "Description", "Project", "Observations", "Area",
                                         "Operation", "Start Time", "End time", "Duration (hours)", "Link"])
     w.writeheader()
+    text = {"Client": "client", "Description": "description", "Project": "project", "Observations": "observations",
+            "Area": "area", "Operation": "operation", "Start Time": "start_time", "End time": "end_time", "Link": "link"}
     for e in rows:
         e = with_week(e)
-        t = lambda k: safe_cell(e.get(k, ""))
-        w.writerow({"Week": e.get("week", ""), "Client": t("client"), "Description": t("description"),
-                    "Project": t("project"), "Observations": t("observations"),
-                    "Area": t("area"), "Operation": t("operation"),
-                    "Start Time": t("start_time"), "End time": t("end_time"),
-                    "Duration (hours)": e.get("duration_hours", ""), "Link": t("link")})
+        w.writerow({"Week": e.get("week", ""), "Duration (hours)": e.get("duration_hours", ""),
+                    **{col: safe_cell(e.get(k, "")) for col, k in text.items()}})
     y, m = month.split("-")
     fname = safe_name(f"{m}_{y}_{client.replace(' ', '_') if client else 'all'}_hours.csv")
     return send_file(io.BytesIO(out.getvalue().encode("utf-8")), mimetype="text/csv; charset=utf-8",
