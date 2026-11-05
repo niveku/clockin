@@ -160,10 +160,8 @@ def _check_restored(t):
         raise UserError("series_id must be text")
     for k in ("due", "occurrence"):
         if t.get(k) is not None:
-            if not isinstance(t[k], str):
-                raise UserError(f"{k} must be a YYYY-MM-DD date")
             try:
-                _d(t[k])
+                clean_due(t[k])                       # also keeps the year in 2000–2100
             except ValueError:
                 raise UserError(f"{k} must be a YYYY-MM-DD date")
     r = t.get("recurrence")

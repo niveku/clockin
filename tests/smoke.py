@@ -67,6 +67,7 @@ with tempfile.TemporaryDirectory() as tmp:
     ok(c.get("/api/export?month=../x"), 400)
     ok(c.post("/api/entries", json={"client": "Personal", "description": "=1+1", "start_time": "2001-02-03 09:00", "end_time": "2001-02-03 10:00"}), 201); assert b"'=1+1" in c.get("/api/export?month=2001-02").data
     ok(c.post("/api/tasks/restore", json={"id": "z", "task": "z", "due": 5}), 400)
+    ok(c.post("/api/tasks/restore", json={"id": "z", "task": "z", "series_id": "z", "occurrence": "9999-12-31", "recurrence": "daily"}), 400)
     # clearing presets is allowed (you may delete them all)
     ok(c.put("/api/presets", json=[]))
 print("smoke test passed")

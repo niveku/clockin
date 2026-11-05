@@ -10,7 +10,10 @@ bp = Blueprint("state", __name__)
 @bp.route("/api/state")
 def state():
     """Everything the panels share, in one round trip. Entries are fetched per range via /api/entries."""
-    run_materialize()                                        # recurring tasks whose show-date has arrived
+    try:
+        run_materialize()                                    # recurring tasks whose show-date has arrived
+    except Exception as e:                                   # never let one bad series take the whole app down
+        print("materialize failed:", e, flush=True)
     store.mutate_projects(services.assign_colors, only_if_changed=True)
     entries, clients = store.load_entries(), store.load_clients()
     timer, auto_stopped = services.resolve_timer()
