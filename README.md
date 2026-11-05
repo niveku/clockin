@@ -1,7 +1,8 @@
 # Clock-in'
 
-A time tracker for freelancers: your tasks, a timer, your timesheet and your invoices on one screen,
-running on your own computer.
+A self-hosted, open-source **time tracker** with tasks, timesheets and invoices on one screen. One-click
+timer, totals by client and project, CSV export, and month-end invoices. No account, no subscription: it runs
+on your own computer. Built by a freelancer, for anyone who tracks their time.
 
 ![Clock-in' with a timer running, the Navigator, a project's tasks and its timesheet](docs/screenshot-light.png)
 
@@ -44,6 +45,24 @@ Month-end gets a wide timesheet. Every panel can be dragged, stacked or folded a
 
 If you bill by the hour, juggle more than one client, and want your tasks and your timesheet to stop living in
 different places, this is the tool I wished I'd had.
+
+## Coming from another time tracker?
+
+If you've used Toggl Track, Clockify or Harvest, the core will feel familiar:
+
+| | Clock-in' |
+|---|---|
+| Timer | One click from any task or preset, or type and press Enter. One timer at a time, always visible. |
+| Timesheet | Every entry for a week, a month or all time; add and edit entries by hand. |
+| Totals | By client and by project, including the timer that's running right now. |
+| Week view | A day-by-day chart of your tracked time, coloured by project. |
+| Export | CSV, plus a spreadsheet timesheet with each invoice. |
+| Invoices | PDF invoice and email text from the hours, for clients with a rate. Optional. |
+| Tasks | Built in: projects, subtasks, due dates, repeating tasks. |
+| Your data | Plain JSON files on your computer, with rolling backups. No account, no cloud. |
+
+What it doesn't do (yet): there's no phone app, no team accounts or shared workspaces, and no cloud sync.
+You can still reach it from other devices on your home network, without a login, so only on a network you trust.
 
 | Dark | First-run tour |
 |---|---|
