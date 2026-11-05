@@ -185,7 +185,7 @@ def get_presets():
 
 @bp.route("/api/presets", methods=["PUT"])
 def put_presets():
-    body = request.get_json(force=True)
+    body = request.get_json()
     if not isinstance(body, list):
         return jsonify({"error": "Expected a list of presets"}), 400
     for p in body:

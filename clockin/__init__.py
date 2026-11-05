@@ -1,8 +1,9 @@
 """Clock-in': time tracking, projects and tasks in one small local app."""
 import threading
 import time
+from urllib.parse import urlsplit
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 
 from . import settings, store
 from .recurrence import UserError, run_materialize
@@ -25,6 +26,13 @@ def create_app(data_dir=None):
     from .api import clients, projects, settings as settings_api, state, tasks, time as time_api
     for mod in (state, tasks, projects, clients, time_api, settings_api):
         app.register_blueprint(mod.bp)
+
+    @app.before_request
+    def _same_origin():
+        """Refuse cross-site writes (CSRF), e.g. a form posting to /api/settings/avatar. Browsers send Origin on these."""
+        origin = request.headers.get("Origin")
+        if request.method not in ("GET", "HEAD", "OPTIONS") and origin and urlsplit(origin).netloc != request.host:
+            return jsonify({"error": "Cross-origin request refused"}), 403
 
     @app.route("/")
     def index():

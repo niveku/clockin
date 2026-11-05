@@ -96,7 +96,9 @@ def delete_client(name):
 
 @bp.route("/api/invoice", methods=["POST"])
 def generate_invoice():
-    data = request.get_json(force=True)
+    data = request.get_json()
+    if not isinstance(data, dict):
+        return jsonify({"error": "Expected a JSON object"}), 400
     month, client = data.get("month"), data.get("client", "")
     num, email_message = str(data.get("invoice_number", "")), data.get("email_message", "")
     if not month or not num:
