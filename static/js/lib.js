@@ -3,7 +3,12 @@
   const U = (window.U = {});
 
   U.esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  U.safeUrl = s => /^(https?|mailto):/i.test(String(s ?? '').trim());   // only these become clickable links
+  // href for an entry link, or '' — same rule as the server: http(s), mailto, or scheme-less (opened as https://)
+  U.safeUrl = s => {
+    const t = String(s ?? '').replace(/[\t\n\r]/g, '').replace(/^[\x00-\x20]+/, ''), head = t.split(/[/?#]/)[0];
+    if (!t) return '';
+    return !head.includes(':') ? 'https://' + t.replace(/^\/+/, '') : /^(https?|mailto)$/i.test(head.split(':')[0]) ? t : '';
+  };
   U.$ = (sel, root = document) => root.querySelector(sel);
   U.$$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   U.el = html => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
