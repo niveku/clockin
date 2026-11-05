@@ -63,7 +63,7 @@ def atomic_write(path, text):
 @contextmanager
 def file_lock(path):
     path = Path(path)
-    with open(path.with_name(path.name + ".lock"), "w", encoding="utf-8") as lf:
+    with open(path.with_name(path.name + ".lock"), "a+", encoding="utf-8") as lf:   # "w" would truncate a locked file
         _lock(lf)
         try:
             yield
