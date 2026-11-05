@@ -63,6 +63,7 @@ with tempfile.TemporaryDirectory() as tmp:
     ok(c.get("/api/state", base_url="http://evil.com"), 400)
     ok(c.put("/api/presets", json=[{"id": 'x"><img>', "label": "a"}]), 400)
     ok(c.post("/api/entries", json={"client": "Personal", "link": "javascript:alert(1)"}), 400)
+    ok(c.post("/api/entries", json={"client": "Personal", "link": "example.com:8080/x", "start_time": "2001-02-03 11:00", "end_time": "2001-02-03 12:00"}), 201)
     ok(c.put("/api/clients/Personal", json={"rate": "nan"}), 400)
     ok(c.get("/api/export?month=../x"), 400)
     ok(c.post("/api/entries", json={"client": "Personal", "description": "=1+1", "start_time": "2001-02-03 09:00", "end_time": "2001-02-03 10:00"}), 201); assert b"'=1+1" in c.get("/api/export?month=2001-02").data

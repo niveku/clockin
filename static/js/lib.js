@@ -5,9 +5,9 @@
   U.esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   // href for an entry link, or '' — same rule as the server: http(s), mailto, or scheme-less (opened as https://)
   U.safeUrl = s => {
-    const t = String(s ?? '').replace(/[\t\n\r]/g, '').replace(/^[\x00-\x20]+/, ''), head = t.split(/[/?#]/)[0];
+    const t = String(s ?? '').replace(/[\t\n\r]/g, '').replace(/^[\x00-\x20]+/, ''), m = /^([a-zA-Z][a-zA-Z0-9+.-]*):(?!\d)/.exec(t);   // "x:8080" is host:port
     if (!t) return '';
-    return !head.includes(':') ? 'https://' + t.replace(/^\/+/, '') : /^(https?|mailto)$/i.test(head.split(':')[0]) ? t : '';
+    return !m ? 'https://' + t.replace(/^\/+/, '') : /^(https?|mailto)$/i.test(m[1]) ? t : '';
   };
   U.$ = (sel, root = document) => root.querySelector(sel);
   U.$$ = (sel, root = document) => [...root.querySelectorAll(sel)];

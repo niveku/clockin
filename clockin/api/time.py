@@ -43,8 +43,8 @@ def _check_link(d):
     if not isinstance(v, str):
         raise ValueError("link must be text")
     s = re.sub(r"[\t\n\r]", "", v).lstrip("".join(map(chr, range(33))))   # what a browser ignores
-    head = re.split(r"[/?#]", s, maxsplit=1)[0]
-    if ":" in head and head.split(":", 1)[0].lower() not in ("http", "https", "mailto"):
+    scheme = re.match(r"([a-zA-Z][a-zA-Z0-9+.-]*):(?!\d)", s)       # "x:8080" is host:port; "[::1]" has no scheme
+    if scheme and scheme.group(1).lower() not in ("http", "https", "mailto"):   # same rule as U.safeUrl
         raise ValueError("link must start with http://, https:// or mailto:")
     return d
 
