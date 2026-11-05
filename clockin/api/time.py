@@ -304,5 +304,5 @@ def export_csv():
                     "Duration (hours)": e.get("duration_hours", ""), "Link": t("link")})
     y, m = month.split("-")
     fname = safe_name(f"{m}_{y}_{client.replace(' ', '_') if client else 'all'}_hours.csv")
-    return send_file(io.BytesIO(out.getvalue().encode("utf-8")), mimetype="text/csv",
+    return send_file(io.BytesIO(out.getvalue().encode("utf-8")), mimetype="text/csv; charset=utf-8",
                      as_attachment=True, download_name=fname)        # quotes the name (RFC 5987 when non-ASCII)
