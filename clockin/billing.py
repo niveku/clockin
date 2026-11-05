@@ -181,7 +181,8 @@ def make_invoice(invoice_num, month_name, year, total_hours, *, sender, bill_to_
     box_y = 48
     box_w = 90
     box_h = 14
-    invoice_date = datetime.now().strftime("%b %-d, %Y")
+    now = datetime.now()
+    invoice_date = f"{now:%b} {now.day}, {now.year}"           # %-d is not portable (fails on Windows)
     total_amount = total_hours * rate
 
     pdf.set_xy(box_x - 30, box_y)
