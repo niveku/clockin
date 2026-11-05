@@ -1,0 +1,18 @@
+{
+  "host": "127.0.0.1",
+  "port": 5002,
+  "currency": "$",
+  "areas": ["Admin", "Design", "Development", "Marketing", "Writing"],
+  "operations": ["Editing", "Meetings", "Planning", "Research", "Review"],
+  "forgotten_timer_hours": 8,
+  "sender": {
+    "name": "Your Name",
+    "address_lines": ["Street address", "City, Country"],
+    "email": "you@example.com",
+    "payment_title": "Payment details",
+    "payment_lines": ["Bank: Example Bank", "Account: 0000 0000"],
+    "notes": "Thank you for your business.",
+    "avatar": null,
+    "signature": "Your Name"
+  }
+}

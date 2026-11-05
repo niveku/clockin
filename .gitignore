@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+*.pyc
+# your data and settings never get committed
+data/
+settings.json
+.timer.json
+*.lock
+backups/

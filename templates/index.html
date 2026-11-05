@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clock-in'</title>
+<script>try{var t=localStorage.getItem('clockin.theme');if(t)document.documentElement.setAttribute('data-theme',t);var a=localStorage.getItem('clockin.palette');if(a)document.documentElement.setAttribute('data-palette',a)}catch(e){}</script>
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+<header id="top">
+  <div class="brand">Clock-in<span>'</span></div>
+  <div class="menus">
+    <button class="menu-btn" id="wsBtn" aria-haspopup="menu">Workspace: <b id="wsName">Plan</b> ▾</button>
+    <button class="menu-btn" id="winBtn" aria-haspopup="menu">Panels ▾</button>
+  </div>
+  <div class="spacer"></div>
+  <span id="topStatus" class="muted"></span>
+  <button class="icon-btn" id="helpBtn" aria-haspopup="menu" title="Help and the tour" aria-label="Help">?</button>
+  <button class="menu-btn" id="themeBtn" aria-haspopup="menu" title="Colours and light / dark">Theme ▾</button>
+</header>
+
+<div id="timerbar" class="idle" role="region" aria-label="Timer"></div>
+<main id="dock" class="dockview-theme-clockin"></main>
+
+<div id="menuLayer"></div>
+<div id="dialogLayer"></div>
+<div id="toasts" aria-live="polite"></div>
+
+<script src="/static/vendor/dockview-core/dockview-core.min.js"></script>
+<script src="/static/js/lib.js"></script>
+<script src="/static/js/state.js"></script>
+<script src="/static/js/timerbar.js"></script>
+<script src="/static/js/clients.js"></script>
+<script src="/static/js/panels/navigator.js"></script>
+<script src="/static/js/panels/tasks.js"></script>
+<script src="/static/js/panels/timesheet.js"></script>
+<script src="/static/js/panels/week.js"></script>
+<script src="/static/js/panels/presets.js"></script>
+<script src="/static/js/panels/inspector.js"></script>
+<script src="/static/js/panels/projects.js"></script>
+<script src="/static/js/workspaces.js"></script>
+<script src="/static/js/tour.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
