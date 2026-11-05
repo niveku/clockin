@@ -58,6 +58,15 @@ with tempfile.TemporaryDirectory() as tmp:
         names = zipfile.ZipFile(io.BytesIO(r.data)).namelist()
         assert any(n.endswith("Timesheet.xlsx") for n in names) and any(n.endswith(".pdf") for n in names), names
         assert c.get("/api/clients").get_json()[0]["last_invoice_num"] == 8
+    # security regressions
+    ok(c.post("/api/timer/stop", headers={"Origin": "http://evil.com"}), 403)
+    ok(c.get("/api/state", base_url="http://evil.com"), 400)
+    ok(c.put("/api/presets", json=[{"id": 'x"><img>', "label": "a"}]), 400)
+    ok(c.post("/api/entries", json={"client": "Personal", "link": "javascript:alert(1)"}), 400)
+    ok(c.put("/api/clients/Personal", json={"rate": "nan"}), 400)
+    ok(c.get("/api/export?month=../x"), 400)
+    ok(c.post("/api/entries", json={"client": "Personal", "description": "=1+1", "start_time": "2001-02-03 09:00", "end_time": "2001-02-03 10:00"}), 201); assert b"'=1+1" in c.get("/api/export?month=2001-02").data
+    ok(c.post("/api/tasks/restore", json={"id": "z", "task": "z", "due": 5}), 400)
     # clearing presets is allowed (you may delete them all)
     ok(c.put("/api/presets", json=[]))
 print("smoke test passed")
