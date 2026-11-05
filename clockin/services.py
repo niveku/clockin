@@ -27,7 +27,7 @@ def week_of_month(start):
 
 def safe_cell(v):
     """Text a spreadsheet could run as a formula gets a leading quote (CSV injection)."""
-    return "'" + v if isinstance(v, str) and v[:1] in ("=", "+", "-", "@", "\t", "\r") else v
+    return "'" + v if isinstance(v, str) and v[:1] in ("=", "+", "-", "@", "\t", "\r", "\n") else v
 
 
 def safe_name(s):
