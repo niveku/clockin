@@ -1,4 +1,5 @@
 """Clock-in': time tracking, projects and tasks in one small local app."""
+import socket
 import threading
 import time
 from urllib.parse import urlsplit
@@ -12,6 +13,24 @@ from .store import UnsafeWrite
 ANY_HOST = ("0.0.0.0", "::", "")     # bind addresses that mean "every interface", not a host name
 
 
+def local_names():
+    """This machine's own names and IPv4 addresses, so other devices on the network can open it by them."""
+    name = socket.gethostname()
+    short = name.split(".")[0]
+    names = {name, short, f"{short}.local"}
+    try:
+        names |= {a[4][0] for a in socket.getaddrinfo(name, None, socket.AF_INET)}
+    except OSError:
+        pass
+    try:                                    # the LAN address; a UDP connect sends nothing
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("10.255.255.255", 1))
+            names.add(s.getsockname()[0])
+    except OSError:
+        pass
+    return sorted(names - {"127.0.0.1", "0.0.0.0"})
+
+
 def create_app(data_dir=None):
     cfg = settings.load(data_dir)
     settings.SETTINGS.clear()
@@ -22,7 +41,7 @@ def create_app(data_dir=None):
                 static_folder=str(settings.ROOT / "static"))
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     # Only answer to known Host headers (blocks DNS rebinding); the port is ignored.
-    bound = [] if cfg["host"] in ANY_HOST else [cfg["host"]]
+    bound = local_names() if cfg["host"] in ANY_HOST else [cfg["host"]]
     app.config["TRUSTED_HOSTS"] = ["localhost", "127.0.0.1", *bound, *cfg.get("trusted_hosts", [])]
 
     from .api import clients, projects, settings as settings_api, state, tasks, time as time_api

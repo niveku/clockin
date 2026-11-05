@@ -130,8 +130,8 @@ backup in `data/backups/rolling/` (newest 50 per file) and refuses to silently d
 | Environment variable | Default | |
 |---|---|---|
 | `CLOCKIN_DATA_DIR` | `./data` | where your files live |
-| `CLOCKIN_HOST` / `CLOCKIN_PORT` | `127.0.0.1` / `5002` | use `0.0.0.0` to reach it from another machine on your network (there's no login, so only do this on a network you trust), and add the address you open it by to `CLOCKIN_TRUSTED_HOSTS` |
-| `CLOCKIN_TRUSTED_HOSTS` | (none) | comma-separated host names or IPs you open it by from other machines, e.g. `192.168.1.20,mypc.local` (or `trusted_hosts` in settings.json). `localhost`, `127.0.0.1` and `CLOCKIN_HOST` are always allowed; any other `Host` is refused, which blocks DNS-rebinding attacks. Behind a reverse proxy that rewrites `Host`, saving changes returns 403 (cross-origin writes are refused) |
+| `CLOCKIN_HOST` / `CLOCKIN_PORT` | `127.0.0.1` / `5002` | use `0.0.0.0` to reach it from another machine on your network (there's no login, so only do this on a network you trust). With `0.0.0.0` the machine's own name, `name.local` and IPv4 addresses are allowed automatically; it prints them at start |
+| `CLOCKIN_TRUSTED_HOSTS` | (none) | extra comma-separated host names or IPs you open it by, e.g. a DNS name or a Tailscale name (or `trusted_hosts` in settings.json). `localhost`, `127.0.0.1` and `CLOCKIN_HOST` are always allowed; any other `Host` is refused, which blocks DNS-rebinding attacks. Behind a reverse proxy that rewrites `Host`, saving changes returns 403 (cross-origin writes are refused) |
 | `CLOCKIN_SETTINGS` | `<data dir>/settings.json` | see `settings.example.json` |
 
 Run **one** copy against a data folder. Several processes work (writes are locked), but one is simpler.
