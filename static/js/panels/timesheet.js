@@ -24,6 +24,7 @@
       .sort((a, b) => (b.start_time || '').localeCompare(a.start_time || ''));
   };
   const rateClient = () => (S.scope.client && S.rateOf(S.scope.client)) ? S.scope.client : '';
+  const ratedClients = () => S.d.clients.filter(c => S.rateOf(c.name)).map(c => c.name);   // the ones you can invoice
 
   function totals(list) {
     const h = S.sumHours(list), m = S.sumMoney(list);
@@ -58,7 +59,7 @@
         ${p.kind !== 'all' ? `<button class="btn ghost sm" data-step="-1" title="Previous">‹</button><span class="muted">${esc(r.label)}</span><button class="btn ghost sm" data-step="1" title="Next">›</button>` : ''}
         <span class="total" id="tsTotal">${tot.text}</span><span class="grow"></span>
         <button class="btn sm" data-act="cols">Columns ▾</button><button class="btn sm" data-act="csv">↓ CSV</button>
-        ${rateClient() ? '<button class="btn sm" data-act="invoice">↓ Invoice</button>' : ''}
+        ${rateClient() || ratedClients().length ? '<button class="btn sm" data-act="invoice">↓ Invoice</button>' : ''}
         <button class="btn sm primary" data-act="add">+ Add entry</button></div>
       ${list.length ? `<table class="ts"><thead><tr>${shown.map(c => `<th>${COLS.find(x => x[0] === c)[1]}</th>`).join('')}</tr></thead>
         <tbody>${list.map(e => `<tr data-id="${e.id}" class="${sel === e.id ? 'sel' : ''}" tabindex="0" style="--pc:${esc(S.projectColor(e.project, e.client))}">${shown.map(c => cell(c, e)).join('')}</tr>`).join('')}</tbody>
@@ -141,7 +142,17 @@
 
   // ── invoice (only offered when the client has a rate) ──
   async function invoice() {
-    const client = rateClient(); if (!client) return;
+    let client = rateClient();
+    if (!client) {                                                          // not inside a billed client: ask which one
+      const list = ratedClients(); if (!list.length) return;
+      const recent = (S.entries.filter(e => list.includes(e.client) && e.start_time).sort((a, b) => b.start_time.localeCompare(a.start_time))[0] || {}).client || list[0];
+      if (list.length === 1) client = list[0];
+      else {
+        const v = await U.dialog({ title: 'Invoice which client?', body: U.form([{ key: 'client', label: 'Client', type: 'select', options: list }], { client: recent }),
+          actions: [{ label: 'Cancel', value: null }, { label: 'Next', primary: true, value: b => U.formValues(b) }] });
+        if (!v) return; client = v.client;
+      }
+    }
     if (S.d.settings.sender_ready === false && window.SenderDialog) {        // a first invoice: say who it's from
       if (!(await SenderDialog.open({ reason: 'Add your details first, so the invoice shows who it’s from and how to pay you.' })) || S.d.settings.sender_ready === false) return;
     }
