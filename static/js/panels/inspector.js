@@ -160,7 +160,7 @@
           if (act === 'del') {
             if (!(await U.confirm('Delete this task?', `“${t.task}” will be removed. You can undo right after.`, { ok: 'Delete', danger: true }))) return;
             const removed = await S.act(() => U.api('DELETE', `/api/tasks/${t.id}`)); S.select(null);
-            U.toast(`Deleted: ${t.task}`, { undo: () => S.act(() => U.api('POST', '/api/tasks/restore', removed)) });
+            U.toast(`Deleted: ${t.task}`, { undo: () => S.restoreTask(removed) });
           }
         } catch (x) { /* shown */ }
       }
