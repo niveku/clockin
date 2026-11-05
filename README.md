@@ -1,22 +1,75 @@
 # Clock-in'
 
 A small, local time tracker with projects and tasks on the same screen. One timer, one task list, one
-timesheet, and a dock you can rearrange. Your data stays in plain JSON files on your machine.
+timesheet, and a dock you can rearrange. Your data stays in plain JSON files on your own computer.
+
+![Clock-in' with a timer running, the Navigator, a project's tasks and its timesheet](docs/screenshot-light.png)
 
 - **Track time** with one click from any task or preset, or type what you're doing and press Enter.
 - **Plan work**: projects, tasks, subtasks, contexts, and repeating tasks that stack up when you miss one.
 - **See it all at once**: Navigator, Tasks, Timesheet, Week, Presets and Inspector are panels you can tab,
-  split, float, collapse to a rail, and save as named workspaces.
+  split, float, fold into a strip, and save as named workspaces.
 - **Pricing is optional.** Give a client a rate and you get money totals and invoices (timesheet `.xlsx` +
   invoice `.pdf` + email text). Leave it empty and that client is only ever tracked in hours.
+- **Light and dark**, five colour themes, and a one-minute tour the first time you open it.
 
-## Run it
+| Dark | First-run tour |
+|---|---|
+| ![Dark mode](docs/screenshot-dark.png) | ![The welcome card of the tour](docs/screenshot-tour.png) |
+
+## Get started
+
+You need **Python 3.9 or newer**. On a Mac, open Terminal and type `python3 --version`; if it isn't there,
+macOS offers to install it (or get it from [python.org](https://www.python.org/downloads/)).
+
+1. **Get the code**: `git clone` this repository, or use the green **Code → Download ZIP** button and unzip it.
+2. **Install** (once), inside the `clockin` folder:
+
+   ```bash
+   python3 -m venv .venv
+   .venv/bin/pip install -r requirements.txt
+   ```
+
+3. **Run it**, then open <http://127.0.0.1:5002> in your browser:
+
+   ```bash
+   .venv/bin/python run.py
+   ```
+
+   It runs while that Terminal window is open; press `Ctrl+C` to stop it.
+   Want something to look at first? `.venv/bin/python tools/seed_demo.py ./data` adds demo data (run it
+   before your first real use; it won't overwrite existing files).
+
+### Start it automatically (Mac)
+
+So you don't need Terminal every time, let macOS start Clock-in' when you log in. Save this as
+`~/Library/LaunchAgents/com.clockin.plist`, replacing both `/path/to/clockin` with the real folder:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.clockin</string>
+  <key>ProgramArguments</key>
+  <array><string>/path/to/clockin/.venv/bin/python</string><string>/path/to/clockin/run.py</string></array>
+  <key>WorkingDirectory</key><string>/path/to/clockin</string>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+</dict>
+</plist>
+```
+
+Then turn it on (and later, off) with:
 
 ```bash
-pip install -r requirements.txt
-python3 tools/seed_demo.py ./data     # optional: demo data, so there's something to look at
-python3 run.py                        # http://127.0.0.1:5002
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.clockin.plist
+launchctl bootout gui/$(id -u)/com.clockin
 ```
+
+On Linux a systemd user service does the same job; on Windows, Task Scheduler with "At log on".
+
+## Your data
 
 Your data lives in `CLOCKIN_DATA_DIR` (default `./data`): `entries.json`, `clients.json`, `projects.json`,
 `tasks.json`, `presets.json` and the running `.timer.json`. Every write takes a file lock, keeps a rolling
@@ -67,5 +120,6 @@ python3 tests/smoke.py      # end-to-end API checks on throwaway demo data
 ## Credits and licence
 
 The docking uses [dockview-core](https://github.com/mathuo/dockview) 8.6.1 (MIT), vendored in
-`static/vendor/dockview-core/`. Only its open-source core is used.
-This project's own licence is not chosen yet.
+`static/vendor/dockview-core/` with its licence (`LICENCE.md`). Only its open-source core is used.
+
+Clock-in' itself is MIT licensed: see [`LICENSE`](LICENSE).

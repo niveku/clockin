@@ -89,8 +89,6 @@
       <div class="tour-foot"><div class="tour-dots" aria-hidden="true">${STEPS.map((_, k) => `<i class="${k === i ? 'on' : k < i ? 'done' : ''}"></i>`).join('')}</div>
       <div class="tour-btns">${btns}</div></div>`;
     typeTitle(st.title);
-    const b = U.$('.tour-body', ui.card);
-    requestAnimationFrame(() => requestAnimationFrame(() => b.classList.add('in')));
   }
 
   function typeTitle(text) {

@@ -249,7 +249,7 @@ def make_invoice(invoice_num, month_name, year, total_hours, *, sender, bill_to_
 
     ry = ty + 9
     pdf.set_text_color(40, 40, 40); pdf.set_font("Helvetica", "B", 9)
-    row_vals = [f"Remote hours {month_name}", str(int(total_hours)), f"{cur}{rate:.2f}", f"{cur}{total_amount:,.2f}"]
+    row_vals = [f"Remote hours {month_name}", f"{total_hours:.2f}", f"{cur}{rate:.2f}", f"{cur}{total_amount:,.2f}"]
     x = M
     for i, (val, cw) in enumerate(zip(row_vals, cws)):
         pdf.set_xy(x, ry)

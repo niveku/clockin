@@ -288,8 +288,8 @@ body.ws-timer #timerbar .what { font-size: 18px; }
 .tour-title .tt-full { visibility: hidden; }
 .tour-title .tt::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: var(--accent); animation: tour-blink .8s steps(1) infinite; }
 .tour-title .tt-full:not(.typing) + .tt::after { animation: tour-blink .8s steps(1) 3 forwards; }
-.tour-body { color: var(--text2); line-height: 1.55; margin: 0 0 12px; opacity: 0; transform: translateY(6px); transition: opacity .35s .12s, transform .35s .12s; }
-.tour-body.in { opacity: 1; transform: none; }
+.tour-body { color: var(--text2); line-height: 1.55; margin: 0 0 12px; animation: tour-in .35s .12s both; }
+@keyframes tour-in { from { opacity: 0; transform: translateY(6px); } }
 .tour-link { border: 0; background: none; padding: 0; margin: -4px 0 12px; color: var(--accent); cursor: pointer; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
 .tour-foot { display: flex; align-items: center; gap: 8px; }
 .tour-dots { display: flex; gap: 5px; flex: 1; }
@@ -314,9 +314,8 @@ body.ws-timer #timerbar .what { font-size: 18px; }
 @keyframes tour-spin { to { transform: rotate(360deg); } }
 @keyframes tour-pop { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
-  .tour-hole, .tour-card, .tour-body, .tour-dots i { transition: none; }
-  .tour-hole, .tour-clock, .tour-clock i, .tour-check, .tour-title .tt::after { animation: none; }
-  .tour-body { opacity: 1; transform: none; }
+  .tour-hole, .tour-card, .tour-dots i { transition: none; }
+  .tour-hole, .tour-clock, .tour-clock i, .tour-check, .tour-title .tt::after, .tour-body { animation: none; }
 }
 
 /* ── Your invoice details ─────────────────────────────── */

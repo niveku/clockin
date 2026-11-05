@@ -23,7 +23,8 @@
     { label: 'Take the tour', disabled: !window.Tour, onClick: () => window.Tour && Tour.start() },
     { label: 'Keyboard shortcuts', onClick: () => U.dialog({ title: 'Keyboard shortcuts', body: `<table class="keys">${SHORTCUTS.map(([k, d]) => `<tr><td><kbd>${U.esc(k)}</kbd></td><td>${U.esc(d)}</td></tr>`).join('')}</table>` }) },
     ...(window.SenderDialog ? [{ label: 'Your invoice details…', onClick: () => SenderDialog.open() }] : [])]);
-  if (window.Tour && !U.pref('tourDone', false)) setTimeout(() => { if (!Tour.isOpen()) Tour.start(); }, 700);
+  const firstRun = window.Tour && !U.pref('tourDone', false) && !/[?&]notour\b/.test(location.search);   // ?notour: for screenshots
+  if (firstRun) setTimeout(() => { if (!Tour.isOpen()) Tour.start(); }, 700);
 
   window.addEventListener('keydown', e => {
     if ((e.metaKey || e.ctrlKey) && /^[0-9]$/.test(e.key)) {
