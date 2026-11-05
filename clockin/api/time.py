@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from flask import Blueprint, Response, jsonify, request
 
 from .. import services, store
-from ..services import FMT, calc_duration, next_id, with_week
+from ..services import FMT, calc_duration, next_id, safe_cell, with_week
 from ..store import P
 
 bp = Blueprint("time", __name__)
@@ -279,11 +279,12 @@ def export_csv():
     w.writeheader()
     for e in rows:
         e = with_week(e)
-        w.writerow({"Week": e.get("week", ""), "Client": e.get("client", ""), "Description": e.get("description", ""),
-                    "Project": e.get("project", ""), "Observations": e.get("observations", ""),
-                    "Area": e.get("area", ""), "Operation": e.get("operation", ""),
-                    "Start Time": e.get("start_time", ""), "End time": e.get("end_time", ""),
-                    "Duration (hours)": e.get("duration_hours", ""), "Link": e.get("link", "")})
+        t = lambda k: safe_cell(e.get(k, ""))
+        w.writerow({"Week": e.get("week", ""), "Client": t("client"), "Description": t("description"),
+                    "Project": t("project"), "Observations": t("observations"),
+                    "Area": t("area"), "Operation": t("operation"),
+                    "Start Time": t("start_time"), "End time": t("end_time"),
+                    "Duration (hours)": e.get("duration_hours", ""), "Link": t("link")})
     y, m = month.split("-")
     fname = f"{m}_{y}_{client.replace(' ', '_') if client else 'all'}_hours.csv"
     return Response(out.getvalue(), mimetype="text/csv",

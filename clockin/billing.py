@@ -129,6 +129,7 @@ def make_timesheet(rows, month_name, year):
         fill = alt_fill if idx % 2 == 1 else None
         for c, val in enumerate(vals, 1):
             cell = ws.cell(row=r, column=c, value=val)
+            if isinstance(val, str): cell.data_type = "s"     # text stays text, never a formula
             cell.font = norm_font; cell.border = border
             cell.alignment = center if c in [1, 2, 10, 11] else left
             if fill: cell.fill = fill

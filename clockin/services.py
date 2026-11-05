@@ -24,6 +24,11 @@ def week_of_month(start):
     return (datetime.strptime(start, FMT).day - 1) // 7 + 1
 
 
+def safe_cell(v):
+    """Text a spreadsheet could run as a formula gets a leading quote (CSV injection)."""
+    return "'" + v if isinstance(v, str) and v[:1] in ("=", "+", "-", "@", "\t", "\r") else v
+
+
 def with_week(e):
     s = e.get("start_time")
     return {**e, "week": week_of_month(s) if s else None}

@@ -133,8 +133,9 @@
   // ── CSV of exactly what's on screen ──
   function csv() {
     const list = rows().slice().reverse(), q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const t = v => q(/^[=+\-@\t\r]/.test(v ?? '') ? "'" + v : v);   // text a spreadsheet could run as a formula gets a leading quote
     const head = ['Week', 'Client', 'Description', 'Project', 'Notes', 'Area', 'Operation', 'Start', 'End', 'Hours', 'Link'];
-    const body = list.map(e => [e.week, e.client, e.description, e.project, e.observations, e.area, e.operation, e.start_time, e.end_time, U.fmtH(S.entryHours(e)), e.link].map(q).join(','));
+    const body = list.map(e => [q(e.week), ...[e.client, e.description, e.project, e.observations, e.area, e.operation, e.start_time, e.end_time].map(t), q(U.fmtH(S.entryHours(e))), t(e.link)].join(','));
     const blob = new Blob([[head.map(q).join(','), ...body].join('\n')], { type: 'text/csv' });
     const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `clockin-${S.scope.client || 'all'}-${range().from || 'all'}.csv`.replace(/\s+/g, '_') });
     a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
