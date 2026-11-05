@@ -10,6 +10,8 @@ from ..store import P
 
 bp = Blueprint("time", __name__)
 
+PRESET_TEXT = ("label", "description", "project", "area", "operation", "client")
+
 
 # ── Entries ──────────────────────────────────────────────────────────────────
 
@@ -186,6 +188,10 @@ def put_presets():
     body = request.get_json(force=True)
     if not isinstance(body, list):
         return jsonify({"error": "Expected a list of presets"}), 400
+    for p in body:
+        if not (isinstance(p, dict) and type(p.get("id")) is int
+                and all(isinstance(p.get(k), (str, type(None))) for k in PRESET_TEXT)):
+            return jsonify({"error": "Each preset needs a whole-number id and text fields"}), 400
     store.mutate_presets(lambda rows: rows.__setitem__(slice(None), body), allow_shrink=len(store.load_presets()))
     return jsonify(body)
 
