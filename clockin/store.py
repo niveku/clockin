@@ -10,6 +10,7 @@ Never nest file_lock() on the *same* path (flock on a second descriptor blocks f
 To lock several files, use locked(*paths): it takes them in a fixed order.
 """
 import copy
+import errno
 import json
 import os
 import shutil
@@ -77,9 +78,11 @@ def _lock(f):
     while True:
         f.seek(0)                                     # msvcrt locks bytes from the current position
         try:
-            return msvcrt.locking(f.fileno(), msvcrt.LK_LOCK, 1)
-        except OSError:                               # LK_LOCK gives up after ~10 s; keep waiting
-            time.sleep(0.1)
+            return msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+        except OSError as e:                          # held by someone else: wait and retry
+            if e.errno not in (errno.EACCES, errno.EDEADLOCK):
+                raise
+            time.sleep(0.02)
 
 
 def _unlock(f):
