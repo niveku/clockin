@@ -3,10 +3,10 @@ import io
 import re
 from datetime import datetime, timedelta
 
-from flask import Blueprint, Response, jsonify, request
+from flask import Blueprint, jsonify, request, send_file
 
 from .. import services, store
-from ..services import FMT, calc_duration, next_id, safe_cell, with_week
+from ..services import FMT, calc_duration, next_id, safe_cell, safe_name, with_week
 from ..store import P
 
 bp = Blueprint("time", __name__)
@@ -284,6 +284,8 @@ def project_names():
 @bp.route("/api/export")
 def export_csv():
     month = request.args.get("month", datetime.now().strftime("%Y-%m"))
+    if not re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", month):
+        return jsonify({"error": "month must be YYYY-MM"}), 400
     client = request.args.get("client")
     rows = sorted((e for e in store.load_entries()
                    if (e.get("start_time") or "").startswith(month) and (not client or e.get("client") == client)),
@@ -301,6 +303,6 @@ def export_csv():
                     "Start Time": t("start_time"), "End time": t("end_time"),
                     "Duration (hours)": e.get("duration_hours", ""), "Link": t("link")})
     y, m = month.split("-")
-    fname = f"{m}_{y}_{client.replace(' ', '_') if client else 'all'}_hours.csv"
-    return Response(out.getvalue(), mimetype="text/csv",
-                    headers={"Content-Disposition": f"attachment; filename={fname}"})
+    fname = safe_name(f"{m}_{y}_{client.replace(' ', '_') if client else 'all'}_hours.csv")
+    return send_file(io.BytesIO(out.getvalue().encode("utf-8")), mimetype="text/csv",
+                     as_attachment=True, download_name=fname)        # quotes the name (RFC 5987 when non-ASCII)

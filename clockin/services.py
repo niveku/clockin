@@ -1,4 +1,5 @@
 """Logic shared by several API modules: entries, projects, timer, quick-start seeding."""
+import re
 from collections import defaultdict
 from datetime import date, datetime, timedelta
 
@@ -27,6 +28,12 @@ def week_of_month(start):
 def safe_cell(v):
     """Text a spreadsheet could run as a formula gets a leading quote (CSV injection)."""
     return "'" + v if isinstance(v, str) and v[:1] in ("=", "+", "-", "@", "\t", "\r") else v
+
+
+def safe_name(s):
+    """A file name from user text: no path separators, '..', control or quote characters."""
+    s = re.sub(r'[\x00-\x1f\x7f/\\:*?"<>|]', "_", str(s))
+    return re.sub(r"\.{2,}", ".", s).strip(" .") or "_"
 
 
 def with_week(e):
