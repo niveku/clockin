@@ -34,7 +34,9 @@ def get_entries():
 
 
 def _check_link(d):
-    """A link may be http(s), mailto or scheme-less; never javascript: and the like."""
+    """The body must be an object; its link may be http(s), mailto or scheme-less, never javascript: and the like."""
+    if not isinstance(d, dict):
+        raise ValueError("Expected a JSON object")
     v = d.get("link")
     if not v:
         return d
