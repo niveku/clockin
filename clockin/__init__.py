@@ -9,6 +9,8 @@ from . import settings, store
 from .recurrence import UserError, run_materialize
 from .store import UnsafeWrite
 
+ANY_HOST = ("0.0.0.0", "::", "")     # bind addresses that mean "every interface", not a host name
+
 
 def create_app(data_dir=None):
     cfg = settings.load(data_dir)
@@ -20,8 +22,8 @@ def create_app(data_dir=None):
                 static_folder=str(settings.ROOT / "static"))
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     # Only answer to known Host headers (blocks DNS rebinding); the port is ignored.
-    app.config["TRUSTED_HOSTS"] = ["localhost", "127.0.0.1", *([cfg["host"]] if cfg["host"] not in ("0.0.0.0", "") else []),
-                                   *cfg.get("trusted_hosts", [])]
+    bound = [] if cfg["host"] in ANY_HOST else [cfg["host"]]
+    app.config["TRUSTED_HOSTS"] = ["localhost", "127.0.0.1", *bound, *cfg.get("trusted_hosts", [])]
 
     from .api import clients, projects, settings as settings_api, state, tasks, time as time_api
     for mod in (state, tasks, projects, clients, time_api, settings_api):
@@ -30,8 +32,10 @@ def create_app(data_dir=None):
     @app.before_request
     def _same_origin():
         """Refuse cross-site writes (CSRF), e.g. a form posting to /api/settings/avatar. Browsers send Origin on these."""
+        if request.method in ("GET", "HEAD", "OPTIONS"):
+            return None
         origin = request.headers.get("Origin")
-        if request.method not in ("GET", "HEAD", "OPTIONS") and origin and urlsplit(origin).netloc != request.host:
+        if (origin and urlsplit(origin).netloc != request.host) or request.headers.get("Sec-Fetch-Site") == "cross-site":
             return jsonify({"error": "Cross-origin request refused"}), 403
 
     @app.route("/")
