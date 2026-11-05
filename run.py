@@ -8,6 +8,6 @@ if __name__ == "__main__":
     s = settings.SETTINGS
     print(f"Clock-in' · data in {s['data_dir']} · http://{s['host']}:{s['port']}", flush=True)
     if s["host"] in ANY_HOST:
-        print(f"  open it from other machines at: {', '.join(local_names())}"
+        print(f"  open it from other machines at: {', '.join(local_names(ipv6=s['host'] == '::'))}"
               " (add other names to CLOCKIN_TRUSTED_HOSTS)", flush=True)
     app.run(host=s["host"], port=s["port"])

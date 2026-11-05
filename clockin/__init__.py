@@ -13,22 +13,29 @@ from .store import UnsafeWrite
 ANY_HOST = ("0.0.0.0", "::", "")     # bind addresses that mean "every interface", not a host name
 
 
-def local_names():
-    """This machine's own names and IPv4 addresses, so other devices on the network can open it by them."""
+def host_entry(h):
+    """A host as request.host shows it: lowercase (browsers lowercase it, Werkzeug compares exactly), IPv6 in []."""
+    h = h.strip().lower()
+    return f"[{h}]" if ":" in h and not h.startswith("[") else h
+
+
+def local_names(ipv6=False):
+    """This machine's own names and IP addresses, so other devices on the network can open it by them."""
     name = socket.gethostname()
     short = name.split(".")[0]
     names = {name, short, f"{short}.local"}
-    try:
-        names |= {a[4][0] for a in socket.getaddrinfo(name, None, socket.AF_INET)}
-    except OSError:
-        pass
+    for fam in (socket.AF_INET, socket.AF_INET6) if ipv6 else (socket.AF_INET,):
+        try:
+            names |= {a[4][0] for a in socket.getaddrinfo(name, None, fam) if "%" not in a[4][0]}   # no link-local zones
+        except OSError:
+            pass
     try:                                    # the LAN address; a UDP connect sends nothing
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.connect(("10.255.255.255", 1))
             names.add(s.getsockname()[0])
     except OSError:
         pass
-    return sorted(names - {"127.0.0.1", "0.0.0.0"})
+    return sorted({host_entry(n) for n in names} - {"127.0.0.1", "0.0.0.0", "[::1]"})
 
 
 def create_app(data_dir=None):
@@ -41,8 +48,9 @@ def create_app(data_dir=None):
                 static_folder=str(settings.ROOT / "static"))
     app.config["TEMPLATES_AUTO_RELOAD"] = True
     # Only answer to known Host headers (blocks DNS rebinding); the port is ignored.
-    bound = local_names() if cfg["host"] in ANY_HOST else [cfg["host"]]
-    app.config["TRUSTED_HOSTS"] = ["localhost", "127.0.0.1", *bound, *cfg.get("trusted_hosts", [])]
+    bound = local_names(ipv6=cfg["host"] == "::") if cfg["host"] in ANY_HOST else [cfg["host"]]
+    app.config["TRUSTED_HOSTS"] = ["localhost", "127.0.0.1", "[::1]",
+                                   *{host_entry(h) for h in [*bound, *cfg.get("trusted_hosts", [])]}]
 
     from .api import clients, projects, settings as settings_api, state, tasks, time as time_api
     for mod in (state, tasks, projects, clients, time_api, settings_api):
