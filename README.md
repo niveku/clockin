@@ -8,9 +8,10 @@ on your own computer. Built by a freelancer, for anyone who tracks their time.
 
 ## Why I built Clock-in'
 
-I'm a freelancer. I edit video, run marketing and do design work for a few clients at once, and most of them
-pay me by the hour. For years my day looked like this: a to-do app in one window, a timer in another, a
-spreadsheet at the end of the month, and a scramble to rebuild what I did on the 14th.
+I'm a freelance illustrator, video editor and graphic designer, and I make my own artwork too. I work for a
+few clients at once, and most of them pay me by the hour. For years my day looked like this: a to-do app in
+one window, a timer in another, a spreadsheet at the end of the month, and a scramble to rebuild what I did
+on the 14th.
 
 Clock-in' puts all of that on one screen.
 
@@ -21,7 +22,7 @@ I can fix it.
 
 **One list per client, one view for today.** The sidebar holds my clients and their projects. Click one and
 everything narrows to it: the tasks, the hours, the week chart. "Now" shows everything that's open across all
-of them. Repeating jobs, like a weekly newsletter or a monthly report, come back on their own. If I miss one,
+of them. Repeating jobs, like a weekly social post or a monthly video, come back on their own. If I miss one,
 it waits for me instead of quietly disappearing.
 
 **Month-end in one click.** On the 1st, I open the Timesheet, pick the client and press **Invoice**. I get a
@@ -33,7 +34,7 @@ ZIP with:
 
 The hours on the invoice match the hours I actually tracked, because they're the same data.
 
-**Not everything is billable.** Personal projects and fixed-fee clients don't get a rate, so they never show
+**Not everything is billable.** My personal artwork and fixed-fee jobs don't get a rate, so they never show
 dollars or an Invoice button. They're tracked in hours so I can still see where my time goes.
 
 **My data stays mine.** It runs on my own computer, with no account and no subscription, and everything is
