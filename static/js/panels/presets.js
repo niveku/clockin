@@ -20,7 +20,7 @@
       <input name="label" value="${esc(p.label || '')}" placeholder="Label"><input name="description" value="${esc(p.description || '')}" placeholder="Description"><input name="project" value="${esc(p.project || '')}" placeholder="Project">
       <input name="area" value="${esc(p.area || '')}" placeholder="Area"><input name="operation" value="${esc(p.operation || '')}" placeholder="Operation">
       <div style="display:flex;gap:6px"><select name="client">${['', ...clients].map(c => `<option value="${esc(c)}" ${c === (p.client || '') ? 'selected' : ''}>${esc(c || '(no client)')}</option>`).join('')}</select><button class="btn sm danger" data-del title="Delete">✕</button></div></div>`;
-    let next = Math.max(0, ...S.d.presets.map(p => p.id || 0)) + 1;
+    let next = Math.max(0, ...S.d.presets.map(p => p.id).filter(Number.isInteger)) + 1;
     S.d.presets.forEach(p => wrap.insertAdjacentHTML('beforeend', rowHtml(p)));
     const add = U.el('<button class="btn sm" type="button">+ Add preset</button>');
     add.onclick = () => { wrap.insertAdjacentHTML('beforeend', rowHtml({ id: next++, client: S.scope.client })); wrap.lastElementChild.querySelector('input').focus(); };
