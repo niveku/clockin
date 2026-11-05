@@ -1,4 +1,5 @@
 import io
+import math
 import zipfile
 from datetime import datetime
 from pathlib import Path
@@ -25,6 +26,8 @@ def clean_rate(raw):
     try:
         rate = float(raw)
     except (TypeError, ValueError):
+        raise BadRate("Rate must be a number, or empty for no pricing")
+    if not math.isfinite(rate):
         raise BadRate("Rate must be a number, or empty for no pricing")
     if rate <= 0:
         raise BadRate("Rate must be more than 0, or empty for no pricing")
