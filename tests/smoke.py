@@ -38,11 +38,11 @@ with tempfile.TemporaryDirectory() as tmp:
     import io, json, zipfile
     assert c.get("/api/state").get_json()["settings"]["sender_ready"] is False
     sfile = Path(tmp) / "settings.json"
-    sfile.write_text(json.dumps({"port": 5999, "areas": ["Keep me"]}))
+    sfile.write_text(json.dumps({"port": 5999, "areas": ["Keep me"]}), encoding="utf-8")
     from clockin import settings as _s; _s.SOURCE = sfile          # as if load() had found it
     ok(c.put("/api/settings/invoice", json={"currency": "EURO1"}), 400)
     ok(c.put("/api/settings/invoice", json={"sender": {"name": "Jamie Doe", "payment_lines": "Bank\nIBAN 1"}, "currency": "€"}))
-    saved = json.loads(sfile.read_text())
+    saved = json.loads(sfile.read_text(encoding="utf-8"))
     assert saved["port"] == 5999 and saved["areas"] == ["Keep me"] and saved["sender"]["name"] == "Jamie Doe", saved
     assert saved["sender"]["payment_lines"] == ["Bank", "IBAN 1"] and oct(sfile.stat().st_mode)[-3:] == "600"
     assert c.get("/api/state").get_json()["settings"]["sender_ready"] is True
