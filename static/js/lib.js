@@ -14,10 +14,11 @@
   U.el = html => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };
 
   // ── Server calls. A failed call throws an Error carrying the server's message. ──
+  U.WRITE = { 'X-Clockin': '1' };   // the server refuses writes without it (CSRF guard); send it on every fetch that changes data
   U.api = async (method, url, body) => {
     let r;
     try {
-      r = await fetch(url, { method, headers: body === undefined ? {} : { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
+      r = await fetch(url, { method, headers: body === undefined ? U.WRITE : { ...U.WRITE, 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
     } catch (e) { throw new Error("Can't reach the server."); }
     let data = null;
     const text = await r.text();

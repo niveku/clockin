@@ -11,7 +11,7 @@ with tempfile.TemporaryDirectory() as tmp:
     os.environ["CLOCKIN_DATA_DIR"] = tmp
     sys.path.insert(0, str(root))
     from clockin import create_app
-    c = create_app().test_client()
+    c = create_app().test_client(); c.environ_base["HTTP_X_CLOCKIN"] = "1"      # the app's CSRF header, as U.api sends it
     ok = lambda r, code=200: (r.status_code == code) or sys.exit(f"{r.request.method} {r.request.path} -> {r.status_code}: {r.data[:200]!r}")
 
     state = c.get("/api/state"); ok(state); d = state.get_json()
@@ -59,6 +59,7 @@ with tempfile.TemporaryDirectory() as tmp:
         assert any(n.endswith("Timesheet.xlsx") for n in names) and any(n.endswith(".pdf") for n in names), names
         assert c.get("/api/clients").get_json()[0]["last_invoice_num"] == 8
     # security regressions
+    ok(c.post("/api/timer/stop", environ_overrides={"HTTP_X_CLOCKIN": "0"}), 403)
     ok(c.post("/api/timer/stop", headers={"Origin": "http://evil.com"}), 403)
     ok(c.get("/api/state", base_url="http://evil.com"), 400)
     ok(c.put("/api/presets", json=[{"id": 'x"><img>', "label": "a"}]), 400)

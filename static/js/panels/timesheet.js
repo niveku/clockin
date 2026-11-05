@@ -174,7 +174,7 @@
     const v = await U.dialog({ title: `Invoice · ${client}`, body: form, wide: true, actions: [{ label: 'Cancel', value: null }, { label: 'Generate ZIP', primary: true, value: b => U.formValues(b) }] });
     if (!v) return;
     try {
-      const r = await fetch('/api/invoice', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ month: v.month, client, invoice_number: v.num, email_message: v.msg }) });
+      const r = await fetch('/api/invoice', { method: 'POST', headers: { ...U.WRITE, 'Content-Type': 'application/json' }, body: JSON.stringify({ month: v.month, client, invoice_number: v.num, email_message: v.msg }) });
       if (!r.ok) throw new Error(((await r.json().catch(() => ({}))).error) || 'Invoice failed');
       const blob = await r.blob(), a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `Invoice_${v.num}.zip` });
       a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); S.refresh();

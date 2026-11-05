@@ -58,9 +58,12 @@ def create_app(data_dir=None):
 
     @app.before_request
     def _same_origin():
-        """Refuse cross-site writes (CSRF), e.g. a form posting to /api/settings/avatar. Browsers send Origin on these."""
+        """Refuse cross-site writes (CSRF), e.g. a form posting to /api/settings/avatar. Browsers send Origin on these.
+        Every write must also carry X-Clockin: 1; another site can't add that header without a CORS preflight."""
         if request.method in ("GET", "HEAD", "OPTIONS"):
             return None
+        if request.headers.get("X-Clockin") != "1":
+            return jsonify({"error": "Missing X-Clockin: 1 header"}), 403
         origin = request.headers.get("Origin")
         if (origin and urlsplit(origin).netloc != request.host) or request.headers.get("Sec-Fetch-Site") == "cross-site":
             return jsonify({"error": "Cross-origin request refused"}), 403
