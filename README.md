@@ -1,17 +1,49 @@
 # Clock-in'
 
-A small, local time tracker with projects and tasks on the same screen. One timer, one task list, one
-timesheet, and a dock you can rearrange. Your data stays in plain JSON files on your own computer.
+A time tracker for freelancers: your tasks, a timer, your timesheet and your invoices on one screen,
+running on your own computer.
 
 ![Clock-in' with a timer running, the Navigator, a project's tasks and its timesheet](docs/screenshot-light.png)
 
-- **Track time** with one click from any task or preset, or type what you're doing and press Enter.
-- **Plan work**: projects, tasks, subtasks, contexts, and repeating tasks that stack up when you miss one.
-- **See it all at once**: Navigator, Tasks, Timesheet, Week, Presets and Inspector are panels you can tab,
-  split, float, fold into a strip, and save as named workspaces.
-- **Pricing is optional.** Give a client a rate and you get money totals and invoices (timesheet `.xlsx` +
-  invoice `.pdf` + email text). Leave it empty and that client is only ever tracked in hours.
-- **Light and dark**, five colour themes, and a one-minute tour the first time you open it.
+## Why I built Clock-in'
+
+I'm a freelancer. I edit video, run marketing and do design work for a few clients at once, and most of them
+pay me by the hour. For years my day looked like this: a to-do app in one window, a timer in another, a
+spreadsheet at the end of the month, and a scramble to rebuild what I did on the 14th.
+
+Clock-in' puts all of that on one screen.
+
+**Start the clock from the work itself.** Every task has a ▶ button. Press it and the timer starts with the
+right client and project already filled in. When I switch jobs, I press ▶ on the next task. There's nothing to
+copy across and nothing to forget. If I do forget, the timer stops itself after 8 hours and flags the entry so
+I can fix it.
+
+**One list per client, one view for today.** The sidebar holds my clients and their projects. Click one and
+everything narrows to it: the tasks, the hours, the week chart. "Now" shows everything that's open across all
+of them. Repeating jobs, like a weekly newsletter or a monthly report, come back on their own. If I miss one,
+it waits for me instead of quietly disappearing.
+
+**Month-end in one click.** On the 1st, I open the Timesheet, pick the client and press **Invoice**. I get a
+ZIP with:
+
+- a timesheet spreadsheet of every entry;
+- a clean PDF invoice with my details, the client's address and the total;
+- the email text, ready to paste.
+
+The hours on the invoice match the hours I actually tracked, because they're the same data.
+
+**Not everything is billable.** Personal projects and fixed-fee clients don't get a rate, so they never show
+dollars or an Invoice button. They're tracked in hours so I can still see where my time goes.
+
+**My data stays mine.** It runs on my own computer, with no account and no subscription, and everything is
+saved as plain files I can back up or open myself. I keep it running on a small always-on Mac at home and open
+it from my laptop, but it works just as well on a single machine.
+
+**Make the screen fit the day.** Planning gets a big task list. Tracking gets a slim window with just the clock.
+Month-end gets a wide timesheet. Every panel can be dragged, stacked or folded away.
+
+If you bill by the hour, juggle more than one client, and want your tasks and your timesheet to stop living in
+different places, this is the tool I wished I'd had.
 
 | Dark | First-run tour |
 |---|---|
