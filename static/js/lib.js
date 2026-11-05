@@ -3,6 +3,7 @@
   const U = (window.U = {});
 
   U.esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  U.safeUrl = s => /^(https?|mailto):/i.test(String(s ?? '').trim());   // only these become clickable links
   U.$ = (sel, root = document) => root.querySelector(sel);
   U.$$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   U.el = html => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstElementChild; };

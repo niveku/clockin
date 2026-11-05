@@ -1,5 +1,6 @@
 import csv
 import io
+import re
 from datetime import datetime, timedelta
 
 from flask import Blueprint, Response, jsonify, request
@@ -32,6 +33,20 @@ def get_entries():
     return jsonify([with_week(e) for e in entries])
 
 
+def _check_link(d):
+    """A link may be http(s), mailto or scheme-less; never javascript: and the like."""
+    v = d.get("link")
+    if not v:
+        return d
+    if not isinstance(v, str):
+        raise ValueError("link must be text")
+    s = re.sub(r"[\t\n\r]", "", v).lstrip("".join(map(chr, range(33))))   # what a browser ignores
+    head = re.split(r"[/?#]", s, maxsplit=1)[0]
+    if ":" in head and head.split(":", 1)[0].lower() not in ("http", "https", "mailto"):
+        raise ValueError("link must start with http://, https:// or mailto:")
+    return d
+
+
 def _blank_entry(d, eid, start, end):
     entry = {"id": eid, "client": d.get("client", ""), "description": d.get("description", ""),
              "project": d.get("project", ""), "area": d.get("area", ""), "operation": d.get("operation", ""),
@@ -46,7 +61,7 @@ def _blank_entry(d, eid, start, end):
 
 @bp.route("/api/entries", methods=["POST"])
 def create_entry():
-    d = request.json or {}
+    d = _check_link(request.json or {})
 
     def add(entries):
         e = _blank_entry(d, next_id(entries), d.get("start_time", ""), d.get("end_time", ""))
@@ -58,7 +73,7 @@ def create_entry():
 
 @bp.route("/api/entries/<int:eid>", methods=["PUT"])
 def update_entry(eid):
-    d = request.json or {}
+    d = _check_link(request.json or {})
     with store.locked(P.entries, P.timer):
         entries = store.load_entries()
         entry = next((e for e in entries if e["id"] == eid), None)
@@ -102,7 +117,7 @@ def get_timer():
 
 @bp.route("/api/timer/start", methods=["POST"])
 def start_timer():
-    d = request.json or {}
+    d = _check_link(request.json or {})
     now = datetime.now()
     with store.locked(P.entries, P.timer):
         entries = store.load_entries()
@@ -147,7 +162,7 @@ def discard_timer():
 
 @bp.route("/api/timer", methods=["PATCH"])
 def patch_timer():
-    d = request.json or {}
+    d = _check_link(request.json or {})
     with store.locked(P.entries, P.timer):
         timer = store.load_timer()
         if not timer:

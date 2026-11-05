@@ -44,7 +44,7 @@
       case 'end': return run ? '<td class="running-tag">● running</td>' : `<td class="mono">${esc(U.niceDT(e.end_time))}</td>`;
       case 'dur': return `<td class="mono" ${run ? 'data-run' : ''}>${U.fmtH(S.entryHours(e))}h</td>`;
       case 'notes': return `<td title="${esc(e.observations)}">${esc(e.observations || '')}</td>`;
-      case 'link': return `<td>${e.link ? `<a href="${esc(e.link)}" target="_blank" rel="noopener">Link ↗</a>` : '<span class="muted">—</span>'}</td>`;
+      case 'link': return `<td>${U.safeUrl(e.link) ? `<a href="${esc(e.link)}" target="_blank" rel="noopener">Link ↗</a>` : e.link ? `<span title="${esc(e.link)}">${esc(e.link)}</span>` : '<span class="muted">—</span>'}</td>`;
     }
   }
 
