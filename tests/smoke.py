@@ -1,4 +1,4 @@
-"""End-to-end smoke test on throwaway demo data:  python3 tests/smoke.py"""
+"""End-to-end smoke test on throwaway demo data:  python tests/smoke.py"""
 import os
 import subprocess
 import sys
@@ -44,7 +44,8 @@ with tempfile.TemporaryDirectory() as tmp:
     ok(c.put("/api/settings/invoice", json={"sender": {"name": "Jamie Doe", "payment_lines": "Bank\nIBAN 1"}, "currency": "€"}))
     saved = json.loads(sfile.read_text(encoding="utf-8"))
     assert saved["port"] == 5999 and saved["areas"] == ["Keep me"] and saved["sender"]["name"] == "Jamie Doe", saved
-    assert saved["sender"]["payment_lines"] == ["Bank", "IBAN 1"] and oct(sfile.stat().st_mode)[-3:] == "600"
+    assert saved["sender"]["payment_lines"] == ["Bank", "IBAN 1"]
+    assert os.name == "nt" or oct(sfile.stat().st_mode)[-3:] == "600"      # Windows has no Unix file modes
     assert c.get("/api/state").get_json()["settings"]["sender_ready"] is True
     ok(c.post("/api/settings/avatar", data={"file": (io.BytesIO(b"GIF89a..."), "x.gif")}, content_type="multipart/form-data"), 400)
     # a real invoice for a client with a rate
